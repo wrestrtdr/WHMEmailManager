@@ -1,0 +1,22 @@
+@charset "utf-8";
+
+body {
+	padding-top: 54px;
+}
+
+.card { height: 100%; }
+.hidden { display: none; }
+#email_nav { margin-left: 30px; }
+#email_nav a { color: #e0e0e0; font-weight: 400; }
+.progress { background-color: #d0d2d4; }
+.btn-group .btn { width: 35px; height: 35px; }
+#email-table-container { margin-top: 50px; }
+#email_list tr > td { vertical-align: middle; }
+.modal-dialog { width: 80%; }
+.form-control-success { color: #495057; background-color: #fff; border-color: #0a8e15; outline: 0; box-shadow: 0 0 0 0.2rem rgba(10, 142, 21, 0.25); }
+.form-control-error { color: #495057; background-color: #fff; border-color: #f7234a; outline: 0; box-shadow: 0 0 0 0.2rem rgba(247, 35, 74, 0.25); }
+
+/* -- responsive -- */
+@media (min-width: 992px) {
+	body { padding-top: 56px; }
+}
