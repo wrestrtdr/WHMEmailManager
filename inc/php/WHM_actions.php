@@ -8,31 +8,61 @@ if($json->action == '' || !isset($json->action) ) {
 	die;
 }
 
-// Esta línea no representa utilidad alguna mas que avisar al usuario para que revise el archivo cP_config.php
-// Por lo que puede ser eliminado sin problema
-if(	WHM_user == '' || WHM_pass == '' || WHM_svIP == '' ||
-	WHM_user == '___change_me___' || WHM_pass == '___change_me___' || WHM_svIP == '___change_me___') { die; }
-
 
 ##-> listar dominios
 if($json->action == 'get_domains') {
 
-	$cPanel = new cpanelAPI(WHM_user, WHM_pass, WHM_svIP);
+	$WHM = new cpanelAPI(WHM_user, WHM_pass, WHM_svIP);
 
-	$response = $cPanel->uapi->Resellers->list_accounts();
+	$list_main_domains = $WHM->uapi->Resellers->list_accounts();
+	$total_main_domains = count($list_main_domains->data);
 
-	$total_domains = count($response->data);
-
+	$total_domains = 0;
 	$list_count = 0;
-	$options = '';
+	$list_all_count = 0;
+	$domains = array();
 
-	while ($list_count < $total_domains) {
-		$options .= "<option
-						value='".$response->data[$list_count]->domain."'
-						cp_user='".$response->data[$list_count]->user."' >"
-						.$response->data[$list_count]->domain.
-					"</option>\n";
+	while( $list_all_count < $total_main_domains ) {
+
+		$user = $list_main_domains->data[$list_all_count]->user;
+		$cPanel = new cpanelAPI($user, WHM_pass, WHM_svIP);
+
+		$response = $cPanel->uapi->DomainInfo->list_domains();
+
+		$total_parked = count($response->data->parked_domains);
+		$total_addons = count($response->data->addon_domains);
+		$prk_count = 0; $add_count = 0;
+
+		$domains[$list_count] = array('domain'=> $response->data->main_domain, 'user' => $user);
 		$list_count++;
+
+		if( $total_parked > 0 ) {
+			while($prk_count < $total_parked) {
+				$domains[$list_count] = array('domain'=> $response->data->parked_domains[$prk_count], 'user' => $user);
+				$users[$list_count] = $user;
+				$list_count++; 
+				$prk_count++;
+			}
+		}
+
+		if( $total_addons > 0 ) {
+			while($add_count < $total_addons) {
+				$domains[$list_count] = array('domain'=> $response->data->addon_domains[$prk_count], 'user' => $user);
+				$domains[$list_count] = $response->data->parked_domains[$add_count];
+				$list_count++; 
+				$add_count++;
+			}
+		}
+		$list_all_count++;
+	}
+
+	$list_options = 0;
+	$options = '';
+	while($list_options < count($domains)) {
+		$options .= "<option value='".$domains[$list_options]['domain']."' cp_user='".$domains[$list_options]['user']."' >"
+						.$domains[$list_options]['domain'].
+					"</option>\n";
+		$list_options++;
 	}
 
 	if($options != '') {
