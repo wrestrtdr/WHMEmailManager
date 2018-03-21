@@ -39,7 +39,6 @@ if($json->action == 'get_domains') {
 		if( $total_parked > 0 ) {
 			while($prk_count < $total_parked) {
 				$domains[$list_count] = array('domain'=> $response->data->parked_domains[$prk_count], 'user' => $user);
-				$users[$list_count] = $user;
 				$list_count++; 
 				$prk_count++;
 			}
@@ -47,8 +46,7 @@ if($json->action == 'get_domains') {
 
 		if( $total_addons > 0 ) {
 			while($add_count < $total_addons) {
-				$domains[$list_count] = array('domain'=> $response->data->addon_domains[$prk_count], 'user' => $user);
-				$domains[$list_count] = $response->data->parked_domains[$add_count];
+				$domains[$list_count] = array('domain'=> $response->data->addon_domains[$add_count], 'user' => $user);
 				$list_count++; 
 				$add_count++;
 			}
